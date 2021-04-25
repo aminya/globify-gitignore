@@ -1,0 +1,55 @@
+{
+  "name": "globify-gitignore",
+  "main": "dist/main.js",
+  "version": "0.1.0",
+  "author": "Amin Yahyaabadi",
+  "description": "  ",
+  "keywords": [
+    "glob"
+  ],
+  "repository": "https://github.com/atom-ide-community/globify-gitignore",
+  "license": "MIT",
+  "prettier": "prettier-config-atomic",
+  "scripts": {
+    "format": "prettier --write .",
+    "test.format": "prettier . --check",
+    "lint": "eslint . --fix",
+    "test.lint": "eslint .",
+    "test": "atom --test spec",
+    "clean": "shx rm -rf dist",
+    "tsc": "tsc -p src/tsconfig.json || echo done",
+    "dev": "npm run clean && cross-env NODE_ENV=development cross-env BABEL_KEEP_MODULES=true rollup -c -w",
+    "build": "npm run clean && cross-env NODE_ENV=production cross-env BABEL_KEEP_MODULES=true rollup -c ",
+    "build-commit": "build-commit -o dist",
+    "bump": "ncu -u -x coffeescript",
+    "prepare": "npm run build"
+  },
+  "atomTestRunner": "./spec/runner",
+  "activationHooks": [
+    "core:loaded-shell-environment"
+  ],
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "dependencies": {
+    "atom-package-deps": "^7.2.3"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^3.6.9",
+    "@types/node": "^14.14.37",
+    "atom-jasmine3-test-runner": "^5.2.2",
+    "build-commit": "0.1.4",
+    "cross-env": "7.0.3",
+    "eslint": "7.23.0",
+    "eslint-config-atomic": "^1.12.4",
+    "npm-check-updates": "11.3.0",
+    "prettier-config-atomic": "^1.0.1",
+    "rollup": "2.42.4",
+    "rollup-plugin-atomic": "^2.1.1",
+    "shx": "0.3.3",
+    "typescript": "^4.2.3"
+  },
+  "providedServices": {},
+  "consumedServices": {},
+  "package-deps": []
+}
