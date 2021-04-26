@@ -19,6 +19,11 @@ export function posixifyPath(givenPath: string): string {
 export function posixifyPathNormalized(givenPath: string): string {
   return posixifyPath(givenPath).replace(/\/$/, "")
 }
+
+function isWhitespace(str: string) {
+  return /^\s*$/.test(str)
+}
+
 /**
  * A line starting with # serves as a comment.
  * Put a backslash ("\") in front of the first hash for patterns that begin with a hash.
