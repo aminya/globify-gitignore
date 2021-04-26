@@ -46,7 +46,7 @@ jobs:
         uses: wagoid/commitlint-github-action@v2
 
       - name: Install dependencies
-        run: npm run install
+        run: npm install
 
       - name: Format ✨
         run: npm run test.format
