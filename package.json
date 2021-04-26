@@ -1,7 +1,7 @@
 {
   "name": "globify-gitignore",
   "main": "dist/main.js",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "author": "Amin Yahyaabadi",
   "description": "Covert Gitignore to Glob patterns",
   "repository": "https://github.com/atom-ide-community/globify-gitignore",
