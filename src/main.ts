@@ -21,6 +21,15 @@ export function posixifyPathNormalized(givenPath: string): string {
 }
 
 /**
+ * Parse and globy the `.gitingore` file that exists in a directry
+ * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
+ * @returns {Promise<Array<string>>} an array of glob patterns
+ */
+export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<Array<string>> {
+  return globifyGitIgnore(await readFile(join(gitIgnoreDirectory, ".gitignore"), "utf-8"), gitIgnoreDirectory)
+}
+
+/**
  * Read `.gitingore` file from a directry
  * @param {string} gitIgnoreContent the content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
