@@ -1,14 +1,15 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@types/is-valid-path': ^0.1.0
   '@types/jasmine': ^3.6.9
   '@types/node': ^14.14.37
   atom-jasmine3-test-runner: ^5.2.2
-  atom-package-deps: ^7.2.3
   build-commit: 0.1.4
   cross-env: 7.0.3
   eslint: 7.23.0
   eslint-config-atomic: ^1.12.4
+  is-valid-path: ^0.1.1
   npm-check-updates: 11.3.0
   prettier-config-atomic: ^1.0.1
   rollup: 2.42.4
@@ -17,9 +18,10 @@ specifiers:
   typescript: ^4.2.3
 
 dependencies:
-  atom-package-deps: 7.2.3
+  is-valid-path: 0.1.1
 
 devDependencies:
+  '@types/is-valid-path': 0.1.0
   '@types/jasmine': 3.6.9
   '@types/node': 14.14.41
   atom-jasmine3-test-runner: 5.2.2
@@ -488,6 +490,10 @@ packages:
     resolution: {integrity: sha512-c5ciR06jK8u9BstrmJyO97m+klJrrhCf9u3rLu3DEAJBirxRqSCvDQoYKmxuYwQI5SZChAWu+tq9oVlGRuzPAg==}
     dev: true
 
+  /@types/is-valid-path/0.1.0:
+    resolution: {integrity: sha512-2ontWtpN8O2nf5S7EjDDJ0DwrRa2t7wmS3Wmo322yWYG6yFBYC1QCaLhz4Iz+mzJy8Kf4zP5yVyEd1ANPDmOFQ==}
+    dev: true
+
   /@types/jasmine/3.6.9:
     resolution: {integrity: sha512-B53NIwMj/AO0O+xfSWLYmKB0Mo6TYxfv2Mk8/c1T2w/e38t55iaPR6p7pHXTTtqfTmevPK3i8T1YweYFTZlxDw==}
     dev: true
@@ -867,11 +873,6 @@ packages:
       '@types/atom': 1.40.10
       '@types/jasmine': 3.6.9
     dev: true
-
-  /atom-package-deps/7.2.3:
-    resolution: {integrity: sha512-Z1FHJS2c2xBN3wQVniG7jXDyE4mUjZlHA0tfIkCND9U/fHaZyBJPno4/jD8PtYUnhlymaHRbCsgxCU3QuKjqfQ==}
-    hasBin: true
-    dev: false
 
   /aws-sign2/0.7.0:
     resolution: {integrity: sha1-tG6JCTSpWR8tL2+G1+ap8bP+dqg=}
@@ -2654,6 +2655,11 @@ packages:
     hasBin: true
     dev: true
 
+  /is-extglob/1.0.0:
+    resolution: {integrity: sha1-rEaBd8SUNAWgkvyPKXYMb/xiBsA=}
+    engines: {node: '>=0.10.0'}
+    dev: false
+
   /is-extglob/2.1.1:
     resolution: {integrity: sha1-qIwCU1eR8C7TfHahueqXc8gz+MI=}
     engines: {node: '>=0.10.0'}
@@ -2676,6 +2682,13 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /is-glob/2.0.1:
+    resolution: {integrity: sha1-0Jb5JqPe1WAPP9/ZEZjLCIjC2GM=}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      is-extglob: 1.0.0
+    dev: false
+
   /is-glob/4.0.1:
     resolution: {integrity: sha512-5G0tKtBTFImOqDnLB2hG6Bp2qcKEFduo4tZu9MT/H6NQv/ghhy30o55ufafxJ/LdH79LLs2Kfrn85TLKyA7BUg==}
     engines: {node: '>=0.10.0'}
@@ -2690,6 +2703,13 @@ packages:
       global-dirs: 3.0.0
       is-path-inside: 3.0.3
     dev: true
+
+  /is-invalid-path/0.1.0:
+    resolution: {integrity: sha1-MHqFWzzxqTi0TqcNLGEQYFNxTzQ=}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      is-glob: 2.0.1
+    dev: false
 
   /is-lambda/1.0.1:
     resolution: {integrity: sha1-PZh3iZ5qU+/AFgUEzeFfgubwYdU=}
@@ -2758,6 +2778,13 @@ packages:
   /is-typedarray/1.0.0:
     resolution: {integrity: sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=}
     dev: true
+
+  /is-valid-path/0.1.1:
+    resolution: {integrity: sha1-EQ+f90w39mPh7HkV60UfLbk6yd8=}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      is-invalid-path: 0.1.0
+    dev: false
 
   /is-wsl/2.2.0:
     resolution: {integrity: sha512-fKzAra0rGJUUBwGBgNkHZuToZcn+TtXHpeCgmkMJMMYx1sQDYaCSyjJBSCa2nH1DGm7s3n1oBnohoVTBaN7Lww==}
