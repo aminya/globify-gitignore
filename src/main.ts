@@ -19,6 +19,19 @@ export function posixifyPath(givenPath: string): string {
 export function posixifyPathNormalized(givenPath: string): string {
   return posixifyPath(givenPath).replace(/\/$/, "")
 }
+/**
+ * Trailing spaces should be removed unless they are quoted with backslash ("\ ").
+ */
+function trimTrailingWhitespace(str: string) {
+  if (!/\\\s+$/.test(str)) {
+    // No escaped trailing whitespace, remove
+    return str.replace(/\s+$/, "")
+  } else {
+    // Trailing whitespace detected, remove only the backslash
+    return str.replace(/\\(\s+)$/, "$1")
+  }
+}
+
 /** Enum that specifies the path type. 1 for directory, 2 for file, 0 for others */
 enum PATH_TYPE {
   OTHER,
