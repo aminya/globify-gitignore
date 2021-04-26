@@ -20,6 +20,14 @@ export function posixifyPathNormalized(givenPath: string): string {
   return posixifyPath(givenPath).replace(/\/$/, "")
 }
 /**
+ * A line starting with # serves as a comment.
+ * Put a backslash ("\") in front of the first hash for patterns that begin with a hash.
+ */
+function isGitIgnoreComment(pattern: string) {
+  return pattern[0] === "#"
+}
+
+/**
  * Trailing spaces should be removed unless they are quoted with backslash ("\ ").
  */
 function trimTrailingWhitespace(str: string) {
