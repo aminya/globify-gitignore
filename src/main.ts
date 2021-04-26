@@ -21,6 +21,42 @@ export function posixifyPathNormalized(givenPath: string): string {
 }
 
 /**
+ * Read `.gitingore` file from a directry
+ * @param {string} gitIgnoreContent the content of the gitignore file
+ * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
+ * @returns {Promise<Array<string>>} an array of glob patterns
+ */
+export async function globifyGitIgnore(
+  gitIgnoreContent: string,
+  gitIgnoreDirectory: string | undefined = undefined
+): Promise<Array<string>> {
+  const gitIgnoreEntries = gitIgnoreContent
+    .split("\n") // Remove empty lines and comments.
+    .filter((entry) => !(isWhitespace(entry) || isGitIgnoreComment(entry))) // Remove surrounding whitespace
+    .map((entry) => trimWhiteSpace(entry))
+  const gitIgnoreEntriesNum = gitIgnoreEntries.length
+  const globEntries = new Array(gitIgnoreEntriesNum)
+
+  for (let iEntry = 0; iEntry < gitIgnoreEntriesNum; iEntry++) {
+    const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory)
+
+    // Check if `globifyGitIgnoreEntry` returns a pair or a string
+    if (typeof globifyOutput === "string") {
+      // string
+      globEntries[iEntry] = globifyOutput // Place the entry in the output array
+    } else {
+      // pair
+      globEntries[iEntry] = globifyOutput[0] // Place the entry in the output array
+
+      globEntries.push(globifyOutput[1]) // Push the additional entry
+    }
+  }
+
+  // unique in the end
+  return unique(globEntries)
+}
+
+/**
  * @param {string} gitIgnoreEntry one git ignore entry (it expects a valid non-comment gitignore entry with no surrounding whitespace)
  * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
  * @returns {Promise<string | [string, string]>} the equivilant glob
