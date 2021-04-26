@@ -2,8 +2,8 @@
 
 Covert Gitignore to Glob patterns
 
-![Build Status (Github Actions)](https://github.com/atom-ide-community/globify-gitignore/workflows/CI/badge.svg)
-[![Dependency Status](https://david-dm.org/atom-ide-community/globify-gitignore.svg)](https://david-dm.org/atom-ide-community/globify-gitignore)
+![Build Status (Github Actions)](https://github.com/aminya/globify-gitignore/workflows/CI/badge.svg)
+[![Dependency Status](https://david-dm.org/aminya/globify-gitignore.svg)](https://david-dm.org/aminya/globify-gitignore)
 
 ## Usage
 
