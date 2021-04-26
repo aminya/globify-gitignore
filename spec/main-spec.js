@@ -1,11 +1,11 @@
 "use babel"
-import { globifyGitIgnoreFile, globifyGitIgnore } from "../dist/main"
+import { globifyGitIgnoreFile, globifyGitIgnore, posixifyPathNormalized } from "../dist/main"
 import { join } from "path"
 import { promises } from "fs"
 const { writeFile } = promises
 
 // current directory has a .gitignore file
-const dir = join(__dirname, "fixtures").replace(/\\/g, "/")
+const dir = posixifyPathNormalized(join(__dirname, "fixtures"))
 
 const input = `# OS metadata
 .DS_Store
@@ -85,110 +85,121 @@ pnpm-debug.log
 *.tgz
 `
 
-const output = [
-  `!${dir}/**/.DS_Store`,
-  `!${dir}/**/Thumbs.db`,
-  `!${dir}/**/node_modules`,
-  `!${dir}/**/package-lock.json`,
-  `!${dir}/**/*.tsbuildinfo`,
-  `!${dir}/**/dist`,
-  `!${dir}/**/*.dll`,
-  `!${dir}/**/*.exe`,
-  `!${dir}/**/*.cmd`,
-  `!${dir}/**/*.pdb`,
-  `!${dir}/**/*.suo`,
-  `!${dir}/**/*.js`,
-  `!${dir}/**/*.user`,
-  `!${dir}/**/*.cache`,
-  `!${dir}/**/*.cs`,
-  `!${dir}/**/*.sln`,
-  `!${dir}/**/*.csproj`,
-  `!${dir}/**/*.map`,
-  `!${dir}/**/*.swp`,
-  `!${dir}/**/*.code-workspace`,
-  `!${dir}/**/*.log`,
-  `!${dir}/**/_Resharper.DefinitelyTyped`,
-  `!${dir}/**/bin`,
-  `!${dir}/**/obj`,
-  `!${dir}/**/Properties`,
-  `!${dir}/**/*~`,
-  `!${dir}/_infrastructure/tests/build`,
-  `!${dir}/**/.idea`,
-  `!${dir}/**/*.iml`,
-  `!${dir}/**/*.js.map`,
-  `${dir}/*.js/**`,
-  `${dir}/scripts/new-package.js`,
-  `${dir}/scripts/not-needed.js`,
-  `${dir}/scripts/lint.js`,
-  `!${dir}/**/npm-debug.log`,
-  `!${dir}/**/.sublimets`,
-  `!${dir}/.settings/launch.json`,
-  `!${dir}/**/.vs`,
-  `!${dir}/**/.vscode`,
-  `!${dir}/**/.history`,
-  `!${dir}/**/yarn.lock`,
-  `!${dir}/**/shrinkwrap.yaml`,
-  `!${dir}/**/pnpm-lock.yaml`,
-  `!${dir}/**/pnpm-debug.log`,
-  `!${dir}/**/*.tgz`,
-  `!${dir}/**/.DS_Store/**`,
-  `!${dir}/**/Thumbs.db/**`,
-  `!${dir}/**/node_modules/**`,
-  `!${dir}/**/package-lock.json/**`,
-  `!${dir}/**/*.tsbuildinfo/**`,
-  `!${dir}/**/dist/**`,
-  `!${dir}/**/*.dll/**`,
-  `!${dir}/**/*.exe/**`,
-  `!${dir}/**/*.cmd/**`,
-  `!${dir}/**/*.pdb/**`,
-  `!${dir}/**/*.suo/**`,
-  `!${dir}/**/*.js/**`,
-  `!${dir}/**/*.user/**`,
-  `!${dir}/**/*.cache/**`,
-  `!${dir}/**/*.cs/**`,
-  `!${dir}/**/*.sln/**`,
-  `!${dir}/**/*.csproj/**`,
-  `!${dir}/**/*.map/**`,
-  `!${dir}/**/*.swp/**`,
-  `!${dir}/**/*.code-workspace/**`,
-  `!${dir}/**/*.log/**`,
-  `!${dir}/**/_Resharper.DefinitelyTyped/**`,
-  `!${dir}/**/bin/**`,
-  `!${dir}/**/obj/**`,
-  `!${dir}/**/Properties/**`,
-  `!${dir}/**/*~/**`,
-  `!${dir}/_infrastructure/tests/build/**`,
-  `!${dir}/**/.idea/**`,
-  `!${dir}/**/*.iml/**`,
-  `!${dir}/**/*.js.map/**`,
-  `${dir}/scripts/new-package.js/**`,
-  `${dir}/scripts/not-needed.js/**`,
-  `${dir}/scripts/lint.js/**`,
-  `!${dir}/**/npm-debug.log/**`,
-  `!${dir}/**/.sublimets/**`,
-  `!${dir}/.settings/launch.json/**`,
-  `!${dir}/**/.vs/**`,
-  `!${dir}/**/.vscode/**`,
-  `!${dir}/**/.history/**`,
-  `!${dir}/**/yarn.lock/**`,
-  `!${dir}/**/shrinkwrap.yaml/**`,
-  `!${dir}/**/pnpm-lock.yaml/**`,
-  `!${dir}/**/pnpm-debug.log/**`,
-  `!${dir}/**/*.tgz/**`,
-]
+function output(givenDir) {
+  let dirPrefix = ""
+  if (typeof givenDir === "string") {
+    dirPrefix = `${givenDir}/`
+  }
+  return [
+    `!${dirPrefix}**/.DS_Store`,
+    `!${dirPrefix}**/Thumbs.db`,
+    `!${dirPrefix}**/node_modules`,
+    `!${dirPrefix}**/package-lock.json`,
+    `!${dirPrefix}**/*.tsbuildinfo`,
+    `!${dirPrefix}**/dist`,
+    `!${dirPrefix}**/*.dll`,
+    `!${dirPrefix}**/*.exe`,
+    `!${dirPrefix}**/*.cmd`,
+    `!${dirPrefix}**/*.pdb`,
+    `!${dirPrefix}**/*.suo`,
+    `!${dirPrefix}**/*.js`,
+    `!${dirPrefix}**/*.user`,
+    `!${dirPrefix}**/*.cache`,
+    `!${dirPrefix}**/*.cs`,
+    `!${dirPrefix}**/*.sln`,
+    `!${dirPrefix}**/*.csproj`,
+    `!${dirPrefix}**/*.map`,
+    `!${dirPrefix}**/*.swp`,
+    `!${dirPrefix}**/*.code-workspace`,
+    `!${dirPrefix}**/*.log`,
+    `!${dirPrefix}**/_Resharper.DefinitelyTyped`,
+    `!${dirPrefix}**/bin`,
+    `!${dirPrefix}**/obj`,
+    `!${dirPrefix}**/Properties`,
+    `!${dirPrefix}**/*~`,
+    `!${dirPrefix}_infrastructure/tests/build`,
+    `!${dirPrefix}**/.idea`,
+    `!${dirPrefix}**/*.iml`,
+    `!${dirPrefix}**/*.js.map`,
+    `${dirPrefix}*.js/**`,
+    `${dirPrefix}scripts/new-package.js`,
+    `${dirPrefix}scripts/not-needed.js`,
+    `${dirPrefix}scripts/lint.js`,
+    `!${dirPrefix}**/npm-debug.log`,
+    `!${dirPrefix}**/.sublimets`,
+    `!${dirPrefix}.settings/launch.json`,
+    `!${dirPrefix}**/.vs`,
+    `!${dirPrefix}**/.vscode`,
+    `!${dirPrefix}**/.history`,
+    `!${dirPrefix}**/yarn.lock`,
+    `!${dirPrefix}**/shrinkwrap.yaml`,
+    `!${dirPrefix}**/pnpm-lock.yaml`,
+    `!${dirPrefix}**/pnpm-debug.log`,
+    `!${dirPrefix}**/*.tgz`,
+    `!${dirPrefix}**/.DS_Store/**`,
+    `!${dirPrefix}**/Thumbs.db/**`,
+    `!${dirPrefix}**/node_modules/**`,
+    `!${dirPrefix}**/package-lock.json/**`,
+    `!${dirPrefix}**/*.tsbuildinfo/**`,
+    `!${dirPrefix}**/dist/**`,
+    `!${dirPrefix}**/*.dll/**`,
+    `!${dirPrefix}**/*.exe/**`,
+    `!${dirPrefix}**/*.cmd/**`,
+    `!${dirPrefix}**/*.pdb/**`,
+    `!${dirPrefix}**/*.suo/**`,
+    `!${dirPrefix}**/*.js/**`,
+    `!${dirPrefix}**/*.user/**`,
+    `!${dirPrefix}**/*.cache/**`,
+    `!${dirPrefix}**/*.cs/**`,
+    `!${dirPrefix}**/*.sln/**`,
+    `!${dirPrefix}**/*.csproj/**`,
+    `!${dirPrefix}**/*.map/**`,
+    `!${dirPrefix}**/*.swp/**`,
+    `!${dirPrefix}**/*.code-workspace/**`,
+    `!${dirPrefix}**/*.log/**`,
+    `!${dirPrefix}**/_Resharper.DefinitelyTyped/**`,
+    `!${dirPrefix}**/bin/**`,
+    `!${dirPrefix}**/obj/**`,
+    `!${dirPrefix}**/Properties/**`,
+    `!${dirPrefix}**/*~/**`,
+    `!${dirPrefix}_infrastructure/tests/build/**`,
+    `!${dirPrefix}**/.idea/**`,
+    `!${dirPrefix}**/*.iml/**`,
+    `!${dirPrefix}**/*.js.map/**`,
+    `${dirPrefix}scripts/new-package.js/**`,
+    `${dirPrefix}scripts/not-needed.js/**`,
+    `${dirPrefix}scripts/lint.js/**`,
+    `!${dirPrefix}**/npm-debug.log/**`,
+    `!${dirPrefix}**/.sublimets/**`,
+    `!${dirPrefix}.settings/launch.json/**`,
+    `!${dirPrefix}**/.vs/**`,
+    `!${dirPrefix}**/.vscode/**`,
+    `!${dirPrefix}**/.history/**`,
+    `!${dirPrefix}**/yarn.lock/**`,
+    `!${dirPrefix}**/shrinkwrap.yaml/**`,
+    `!${dirPrefix}**/pnpm-lock.yaml/**`,
+    `!${dirPrefix}**/pnpm-debug.log/**`,
+    `!${dirPrefix}**/*.tgz/**`,
+  ]
+}
 
 describe("globify-gitignore", () => {
   describe("globifyGitIgnoreFile", () => {
     it("reads the gitignore and converts it to glob patterns", async () => {
       await writeFile(join(dir, ".gitignore"), input)
       const globPatterns = await globifyGitIgnoreFile(dir)
-      expect(globPatterns).toEqual(output)
+      expect(globPatterns).toEqual(output(dir))
     })
   })
   describe("globifyGitIgnore", () => {
     it("converts it to glob patterns", async () => {
       const globPatterns = await globifyGitIgnore(input, dir)
-      expect(globPatterns).toEqual(output)
+      expect(globPatterns).toEqual(output(dir))
+    })
+    it("uses no dir prefix if only the content is passed", async () => {
+      await writeFile(join(dir, ".gitignore"), input)
+      const globPatterns = await globifyGitIgnore(input)
+      expect(globPatterns).toEqual(output())
     })
   })
 })
