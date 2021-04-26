@@ -29,12 +29,14 @@
     "is-valid-path": "^0.1.1"
   },
   "devDependencies": {
+    "@types/dedent": "^0.7.0",
     "@types/is-valid-path": "^0.1.0",
     "@types/jasmine": "^3.6.9",
     "@types/node": "^14.14.37",
     "atom-jasmine3-test-runner": "^5.2.2",
     "build-commit": "0.1.4",
     "cross-env": "7.0.3",
+    "dedent": "^0.7.0",
     "eslint": "7.23.0",
     "eslint-config-atomic": "^1.12.4",
     "npm-check-updates": "11.3.0",
