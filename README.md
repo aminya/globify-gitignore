@@ -4,8 +4,6 @@ Covert Gitignore to Glob patterns
 
 ![Build Status (Github Actions)](https://github.com/atom-ide-community/globify-gitignore/workflows/CI/badge.svg)
 [![Dependency Status](https://david-dm.org/atom-ide-community/globify-gitignore.svg)](https://david-dm.org/atom-ide-community/globify-gitignore)
-[![apm](https://img.shields.io/apm/dm/globify-gitignore.svg)](https://github.com/atom-ide-community/globify-gitignore)
-[![apm](https://img.shields.io/apm/v/globify-gitignore.svg)](https://github.com/atom-ide-community/globify-gitignore)
 
 ## Usage
 
