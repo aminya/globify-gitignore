@@ -20,6 +20,17 @@ export function posixifyPathNormalized(givenPath: string): string {
   return posixifyPath(givenPath).replace(/\/$/, "")
 }
 
+/**
+ * @param {string} givenPath The given path to be globified
+ * @param {string} givenDirectory [process.cwd()]  The cwd to use to resolve relative pathnames
+ * @returns {Promise<string | [string, string]>} The glob path or the file path itself
+ */
+export function globifyPath(
+  givenPath: string,
+  givenDirectory: string = process.cwd()
+): Promise<string | [string, string]> {
+  return globifyGitIgnoreEntry(posixifyPath(givenPath), givenDirectory)
+}
 
 /**
  * Globifies a directory
