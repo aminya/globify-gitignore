@@ -20,6 +20,7 @@ specifiers:
   typescript: ^4.2.3
 
 dependencies:
+  dedent: 0.7.0
   is-valid-path: 0.1.1
 
 devDependencies:
@@ -30,7 +31,6 @@ devDependencies:
   atom-jasmine3-test-runner: 5.2.2
   build-commit: 0.1.4
   cross-env: 7.0.3
-  dedent: 0.7.0
   eslint: 7.23.0
   eslint-config-atomic: 1.14.2
   npm-check-updates: 11.3.0
@@ -1456,7 +1456,7 @@ packages:
 
   /dedent/0.7.0:
     resolution: {integrity: sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw=}
-    dev: true
+    dev: false
 
   /deep-extend/0.6.0:
     resolution: {integrity: sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==}

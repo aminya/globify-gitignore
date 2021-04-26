@@ -3,6 +3,7 @@ import { promises } from "fs"
 const { readFile, stat } = promises
 import isPath from "is-valid-path"
 import { unique } from "./utils"
+import dedent from "dedent"
 
 /** Converts given path to Posix (replacing \\ with /)
  * @param {string} givenPath   Path to convert
@@ -59,7 +60,7 @@ export async function globifyGitIgnore(
   gitIgnoreContent: string,
   gitIgnoreDirectory: string | undefined = undefined
 ): Promise<Array<string>> {
-  const gitIgnoreEntries = gitIgnoreContent
+  const gitIgnoreEntries = dedent(gitIgnoreContent)
     .split("\n") // Remove empty lines and comments.
     .filter((entry) => !(isWhitespace(entry) || isGitIgnoreComment(entry))) // Remove surrounding whitespace
     .map((entry) => trimWhiteSpace(entry))

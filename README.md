@@ -21,23 +21,22 @@ You can use `globifyGitIgnore` to pass the gitignore content directly
 
 ```ts
 import { globifyGitIgnore } from "globify-gitignore"
-import dedent from "dedent"
 
 async function main() {
-  const gitignoreContent = dedent`# OS metadata
-    .DS_Store
-    Thumbs.db
+  const gitignoreContent = `# OS metadata
+  .DS_Store
+  Thumbs.db
 
-    # Node
-    node_modules
-    package-lock.json
+  # Node
+  node_modules
+  package-lock.json
 
-    # TypeScript
-    *.tsbuildinfo
+  # TypeScript
+  *.tsbuildinfo
 
-    # Build directories
-    dist
-    `
+  # Build directories
+  dist
+  `
   const gitignoreDirectory = __dirname
 
   const globPatterns = await globifyGitIgnore(gitignoreContent, gitignoreDirectory)

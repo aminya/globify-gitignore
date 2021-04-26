@@ -30,6 +30,7 @@
     "core:loaded-shell-environment"
   ],
   "dependencies": {
+    "dedent": "^0.7.0",
     "is-valid-path": "^0.1.1"
   },
   "devDependencies": {
@@ -40,7 +41,6 @@
     "atom-jasmine3-test-runner": "^5.2.2",
     "build-commit": "0.1.4",
     "cross-env": "7.0.3",
-    "dedent": "^0.7.0",
     "eslint": "7.23.0",
     "eslint-config-atomic": "^1.12.4",
     "npm-check-updates": "11.3.0",

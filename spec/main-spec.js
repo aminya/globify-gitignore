@@ -1,6 +1,5 @@
 "use babel"
 import { globifyGitIgnoreFile, globifyGitIgnore } from "../dist/main"
-import dedent from "dedent"
 
 describe("globify-gitignore", () => {
   describe("globifyGitIgnoreFile", () => {
@@ -29,7 +28,7 @@ describe("globify-gitignore", () => {
       // current directory has a .gitignore file
       const dir = __dirname.replace(/\\/g, "/")
       const globPatterns = await globifyGitIgnore(
-        dedent`# OS metadata
+        `# OS metadata
         .DS_Store
         Thumbs.db
 
