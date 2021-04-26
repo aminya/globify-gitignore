@@ -20,6 +20,93 @@ export function posixifyPathNormalized(givenPath: string): string {
   return posixifyPath(givenPath).replace(/\/$/, "")
 }
 
+/**
+ * @param {string} gitIgnoreEntry one git ignore entry (it expects a valid non-comment gitignore entry with no surrounding whitespace)
+ * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
+ * @returns {Promise<string | [string, string]>} the equivilant glob
+ */
+async function globifyGitIgnoreEntry(
+  gitIgnoreEntry: string,
+  gitIgnoreDirectory: string | undefined
+): Promise<string | [string, string]> {
+  // output glob entry
+  let entry = gitIgnoreEntry
+  // Process the entry beginning
+  // '!' in .gitignore means to force include the pattern
+  // remove "!" to allow the processing of the pattern and swap ! in the end of the loop
+  let forceInclude = false
+
+  if (entry[0] === "!") {
+    entry = entry.substring(1)
+    forceInclude = true
+  }
+
+  // If there is a separator at the beginning or middle (or both) of the pattern,
+  // then the pattern is relative to the directory level of the particular .gitignore file itself
+  // Process slash
+
+  /** @type {PATH_TYPE.OTHER | PATH_TYPE.DIRECTORY | PATH_TYPE.FILE} */
+  let pathType: PATH_TYPE.OTHER | PATH_TYPE.DIRECTORY | PATH_TYPE.FILE = PATH_TYPE.OTHER
+
+  if (entry[0] === "/") {
+    // Patterns starting with '/' in gitignore are considred relative to the project directory while glob
+    // treats them as relative to the OS root directory.
+    // So we trim the slash to make it relative to project folder from glob perspective.
+    entry = entry.substring(1)
+
+    // Check if it is a directory or file
+    if (isPath(entry)) {
+      pathType = await getPathType(gitIgnoreDirectory ? join(gitIgnoreDirectory, entry) : entry)
+    }
+  } else {
+    const slashPlacement = entry.indexOf("/")
+
+    if (slashPlacement === -1) {
+      // Patterns that don't have `/` are '**/' from glob perspective (can match at any level)
+      if (!entry.startsWith("**/")) {
+        entry = `**/${entry}`
+      }
+    } else if (slashPlacement === entry.length - 1) {
+      // If there is a separator at the end of the pattern then it only matches directories
+      // slash is in the end
+      pathType = PATH_TYPE.DIRECTORY
+    } else {
+      // has `/` in the middle so it is a relative path
+      // Check if it is a directory or file
+      if (isPath(entry)) {
+        pathType = await getPathType(gitIgnoreDirectory ? join(gitIgnoreDirectory, entry) : entry)
+      }
+    }
+  }
+
+  // prepend the absolute root directory
+  if (gitIgnoreDirectory) {
+    entry = `${posixifyPath(gitIgnoreDirectory)}/${entry}`
+  }
+
+  // swap !
+  entry = forceInclude ? entry : `!${entry}`
+
+  // Process the entry ending
+  if (pathType === PATH_TYPE.DIRECTORY) {
+    // in glob this is equal to `directry/**`
+    if (entry.endsWith("/")) {
+      return `${entry}**`
+    } else {
+      return `${entry}/**`
+    }
+  } else if (pathType === PATH_TYPE.FILE) {
+    // return as is for file
+    return entry
+  } else if (!entry.endsWith("/**")) {
+    // the pattern can match both files and directories
+    // so we should include both `entry` and `entry/**`
+    return [entry, `${entry}/**`]
+  } else {
+    return entry
+  }
+}
+
 function isWhitespace(str: string) {
   return /^\s*$/.test(str)
 }
