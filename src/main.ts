@@ -32,6 +32,11 @@ function trimTrailingWhitespace(str: string) {
   }
 }
 
+/** Remove leading whitespace */
+function trimLeadingWhiteSpace(str: string) {
+  return str.replace(/^\s+/, "")
+}
+
 /** Enum that specifies the path type. 1 for directory, 2 for file, 0 for others */
 enum PATH_TYPE {
   OTHER,
