@@ -20,6 +20,15 @@ export function posixifyPathNormalized(givenPath: string): string {
   return posixifyPath(givenPath).replace(/\/$/, "")
 }
 
+
+/**
+ * Globifies a directory
+ * @param {string} givenDirectory The given directory to be globified
+ */
+export function globifyDirectory(givenDirectory: string) {
+  return `${posixifyPathNormalized(givenDirectory)}/**`
+}
+
 /**
  * Parse and globy the `.gitingore` file that exists in a directry
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
