@@ -37,6 +37,11 @@ function trimLeadingWhiteSpace(str: string) {
   return str.replace(/^\s+/, "")
 }
 
+/** Remove whitespace from a gitignore entry */
+function trimWhiteSpace(str: string) {
+  return trimLeadingWhiteSpace(trimTrailingWhitespace(str))
+}
+
 /** Enum that specifies the path type. 1 for directory, 2 for file, 0 for others */
 enum PATH_TYPE {
   OTHER,
