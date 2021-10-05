@@ -1,9 +1,9 @@
 # globify-gitignore
 
-Covert Gitignore to Glob patterns
+Convert Gitignore to Glob patterns
 
 ![Build Status (Github Actions)](https://github.com/aminya/globify-gitignore/workflows/CI/badge.svg)
-[![Dependency Status](https://david-dm.org/aminya/globify-gitignore.svg)](https://david-dm.org/aminya/globify-gitignore)
+
 
 ## Usage
 
@@ -48,14 +48,14 @@ main()
 
 ```ts
 /**
- * Parse and globy the `.gitingore` file that exists in a directry
+ * Parse and globy the `.gitingore` file that exists in a directory
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
  * @returns {Promise<Array<string>>} an array of glob patterns
  */
 export declare function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<Array<string>>
 
 /**
- * Read `.gitingore` file from a directry
+ * Read `.gitingore` file from a directory
  * @param {string} gitIgnoreContent the content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
  * @returns {Promise<Array<string>>} an array of glob patterns

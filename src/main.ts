@@ -23,7 +23,7 @@ export function posixifyPathNormalized(givenPath: string): string {
 
 /**
  * @param {string} givenPath The given path to be globified
- * @param {string} givenDirectory [process.cwd()]  The cwd to use to resolve relative pathnames
+ * @param {string} givenDirectory [process.cwd()]  The cwd to use to resolve relative path names
  * @returns {Promise<string | [string, string]>} The glob path or the file path itself
  */
 export function globifyPath(
@@ -42,7 +42,7 @@ export function globifyDirectory(givenDirectory: string) {
 }
 
 /**
- * Parse and globy the `.gitingore` file that exists in a directry
+ * Parse and globy the `.gitingore` file that exists in a directory
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
  * @returns {Promise<Array<string>>} an array of glob patterns
  */
@@ -51,7 +51,7 @@ export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<
 }
 
 /**
- * Read `.gitingore` file from a directry
+ * Read `.gitingore` file from a directory
  * @param {string} gitIgnoreContent the content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
  * @returns {Promise<Array<string>>} an array of glob patterns
@@ -89,7 +89,7 @@ export async function globifyGitIgnore(
 /**
  * @param {string} gitIgnoreEntry one git ignore entry (it expects a valid non-comment gitignore entry with no surrounding whitespace)
  * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
- * @returns {Promise<string | [string, string]>} the equivilant glob
+ * @returns {Promise<string | [string, string]>} the equivalent glob
  */
 async function globifyGitIgnoreEntry(
   gitIgnoreEntry: string,
@@ -115,7 +115,7 @@ async function globifyGitIgnoreEntry(
   let pathType: PATH_TYPE.OTHER | PATH_TYPE.DIRECTORY | PATH_TYPE.FILE = PATH_TYPE.OTHER
 
   if (entry[0] === "/") {
-    // Patterns starting with '/' in gitignore are considred relative to the project directory while glob
+    // Patterns starting with '/' in gitignore are considered relative to the project directory while glob
     // treats them as relative to the OS root directory.
     // So we trim the slash to make it relative to project folder from glob perspective.
     entry = entry.substring(1)
@@ -155,7 +155,7 @@ async function globifyGitIgnoreEntry(
 
   // Process the entry ending
   if (pathType === PATH_TYPE.DIRECTORY) {
-    // in glob this is equal to `directry/**`
+    // in glob this is equal to `directory/**`
     if (entry.endsWith("/")) {
       return `${entry}**`
     } else {

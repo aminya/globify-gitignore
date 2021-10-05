@@ -3,8 +3,8 @@
   "main": "dist/main.js",
   "version": "0.2.0",
   "author": "Amin Yahyaabadi",
-  "description": "Covert Gitignore to Glob patterns",
-  "repository": "https://github.com/atom-ide-community/globify-gitignore",
+  "description": "Covnert Gitignore to Glob patterns",
+  "repository": "https://github.com/aminya/globify-gitignore",
   "license": "MIT",
   "prettier": "prettier-config-atomic",
   "files": [
