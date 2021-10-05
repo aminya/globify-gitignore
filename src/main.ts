@@ -5,17 +5,21 @@ import isPath from "is-valid-path"
 import { unique } from "./utils"
 import dedent from "dedent"
 
-/** Converts given path to Posix (replacing \\ with /)
- * @param {string} givenPath   Path to convert
- * @returns {string}          Converted filepath
+/**
+ * Converts given path to Posix (replacing \ with /)
+ *
+ * @param {string} givenPath Path to convert
+ * @returns {string} Converted filepath
  */
 export function posixifyPath(givenPath: string): string {
   return normalize(givenPath).replace(/\\/g, "/")
 }
 
-/** Converts given path to Posix (replacing \\ with /) and removing ending slashes
- * @param {string} givenPath   Path to convert
- * @returns {string}          Converted filepath
+/**
+ * Converts given path to Posix (replacing \ with /) and removing ending slashes
+ *
+ * @param {string} givenPath Path to convert
+ * @returns {string} Converted filepath
  */
 export function posixifyPathNormalized(givenPath: string): string {
   return posixifyPath(givenPath).replace(/\/$/, "")
@@ -23,7 +27,7 @@ export function posixifyPathNormalized(givenPath: string): string {
 
 /**
  * @param {string} givenPath The given path to be globified
- * @param {string} givenDirectory [process.cwd()]  The cwd to use to resolve relative path names
+ * @param {string} givenDirectory [process.cwd()] The cwd to use to resolve relative path names
  * @returns {Promise<string | [string, string]>} The glob path or the file path itself
  */
 export function globifyPath(
@@ -35,6 +39,7 @@ export function globifyPath(
 
 /**
  * Globifies a directory
+ *
  * @param {string} givenDirectory The given directory to be globified
  */
 export function globifyDirectory(givenDirectory: string) {
@@ -43,8 +48,9 @@ export function globifyDirectory(givenDirectory: string) {
 
 /**
  * Parse and globy the `.gitingore` file that exists in a directory
+ *
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
- * @returns {Promise<Array<string>>} an array of glob patterns
+ * @returns {Promise<string[]>} An array of glob patterns
  */
 export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<Array<string>> {
   return globifyGitIgnore(await readFile(join(gitIgnoreDirectory, ".gitignore"), "utf-8"), gitIgnoreDirectory)
@@ -52,9 +58,10 @@ export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<
 
 /**
  * Read `.gitingore` file from a directory
- * @param {string} gitIgnoreContent the content of the gitignore file
- * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
- * @returns {Promise<Array<string>>} an array of glob patterns
+ *
+ * @param {string} gitIgnoreContent The content of the gitignore file
+ * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
+ * @returns {Promise<string[]>} An array of glob patterns
  */
 export async function globifyGitIgnore(
   gitIgnoreContent: string,
@@ -87,9 +94,10 @@ export async function globifyGitIgnore(
 }
 
 /**
- * @param {string} gitIgnoreEntry one git ignore entry (it expects a valid non-comment gitignore entry with no surrounding whitespace)
- * @param {string | undefined} gitIgnoreDirectory the directory of gitignore
- * @returns {Promise<string | [string, string]>} the equivalent glob
+ * @param {string} gitIgnoreEntry One git ignore entry (it expects a valid non-comment gitignore entry with no
+ *   surrounding whitespace)
+ * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
+ * @returns {Promise<string | [string, string]>} The equivalent glob
  */
 async function globifyGitIgnoreEntry(
   gitIgnoreEntry: string,
@@ -178,16 +186,14 @@ function isWhitespace(str: string) {
 }
 
 /**
- * A line starting with # serves as a comment.
- * Put a backslash ("\") in front of the first hash for patterns that begin with a hash.
+ * A line starting with # serves as a comment. Put a backslash ("") in front of the first hash for patterns that begin
+ * with a hash.
  */
 function isGitIgnoreComment(pattern: string) {
   return pattern[0] === "#"
 }
 
-/**
- * Trailing spaces should be removed unless they are quoted with backslash ("\ ").
- */
+/** Trailing spaces should be removed unless they are quoted with backslash ("\ "). */
 function trimTrailingWhitespace(str: string) {
   if (!/\\\s+$/.test(str)) {
     // No escaped trailing whitespace, remove
@@ -215,8 +221,10 @@ enum PATH_TYPE {
   FILE,
 }
 
-/** Get the type of the given path
- * @param {string} givenPath absolute path
+/**
+ * Get the type of the given path
+ *
+ * @param {string} givenPath Absolute path
  * @returns {Promise<PATH_TYPE>}
  */
 async function getPathType(filepath: string): Promise<PATH_TYPE> {

@@ -1,34 +1,30 @@
 {
   "name": "globify-gitignore",
-  "main": "dist/main.js",
   "version": "0.2.0",
-  "author": "Amin Yahyaabadi",
   "description": "Covnert Gitignore to Glob patterns",
   "repository": "https://github.com/aminya/globify-gitignore",
   "license": "MIT",
-  "prettier": "prettier-config-atomic",
+  "author": "Amin Yahyaabadi",
+  "main": "dist/main.js",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "format": "prettier --write .",
-    "test.format": "prettier . --check",
-    "lint": "eslint . --fix",
-    "test.lint": "eslint .",
-    "test": "atom --test spec",
-    "clean": "shx rm -rf dist",
-    "tsc": "tsc -p src/tsconfig.json || echo done",
-    "dev": "npm run clean && cross-env NODE_ENV=development cross-env BABEL_KEEP_MODULES=true rollup -c -w",
     "build": "npm run clean && cross-env NODE_ENV=production cross-env BABEL_KEEP_MODULES=true rollup -c ",
     "build-commit": "build-commit -o dist",
     "bump": "ncu -u -x coffeescript",
-    "prepare": "npm run build"
+    "clean": "shx rm -rf dist",
+    "dev": "npm run clean && cross-env NODE_ENV=development cross-env BABEL_KEEP_MODULES=true rollup -c -w",
+    "format": "prettier --write .",
+    "lint": "eslint . --fix",
+    "prepare": "npm run build",
+    "test": "atom --test spec",
+    "test.format": "prettier . --check",
+    "test.lint": "eslint .",
+    "tsc": "tsc -p src/tsconfig.json || echo done"
   },
-  "atomTestRunner": "./spec/runner",
-  "activationHooks": [
-    "core:loaded-shell-environment"
-  ],
+  "prettier": "prettier-config-atomic",
   "dependencies": {
     "dedent": "^0.7.0",
     "is-valid-path": "^0.1.1"
@@ -36,19 +32,19 @@
   "devDependencies": {
     "@types/dedent": "^0.7.0",
     "@types/is-valid-path": "^0.1.0",
-    "@types/jasmine": "^3.6.9",
-    "@types/node": "^14.14.37",
-    "atom-jasmine3-test-runner": "^5.2.2",
+    "@types/jasmine": "^3.9.1",
+    "@types/node": "^16.10.2",
+    "atom-jasmine3-test-runner": "^5.2.8",
     "build-commit": "0.1.4",
     "cross-env": "7.0.3",
-    "eslint": "7.23.0",
-    "eslint-config-atomic": "^1.12.4",
-    "npm-check-updates": "11.3.0",
-    "prettier-config-atomic": "^1.0.1",
-    "rollup": "2.42.4",
-    "rollup-plugin-atomic": "^2.1.1",
+    "eslint": "7.32.0",
+    "eslint-config-atomic": "^1.16.3",
+    "npm-check-updates": "11.8.5",
+    "prettier-config-atomic": "^3.0.1",
+    "rollup": "2.58.0",
+    "rollup-plugin-atomic": "^3.0.1",
     "shx": "0.3.3",
-    "typescript": "^4.2.3"
+    "typescript": "^4.4.3"
   },
   "keywords": [
     "globify",
@@ -84,5 +80,9 @@
     "promise",
     "gitignore",
     "git"
-  ]
+  ],
+  "activationHooks": [
+    "core:loaded-shell-environment"
+  ],
+  "atomTestRunner": "./spec/runner"
 }
