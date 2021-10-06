@@ -57,7 +57,7 @@ export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<
 }
 
 /**
- * Read `.gitingore` file from a directory
+ * Globify the content of a gitignore string
  *
  * @param {string} gitIgnoreContent The content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore

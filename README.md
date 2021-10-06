@@ -55,13 +55,13 @@ main()
 export declare function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<Array<string>>
 
 /**
- * Read `.gitingore` file from a directory
+ * Globify the content of a gitignore string
  *
  * @param {string} gitIgnoreContent The content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
  * @returns {Promise<string[]>} An array of glob patterns
  */
-export declare function globifyGitIgnore(
+export async function globifyGitIgnore(
   gitIgnoreContent: string,
   gitIgnoreDirectory?: string | undefined
 ): Promise<Array<string>>
