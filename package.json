@@ -27,7 +27,8 @@
   "prettier": "prettier-config-atomic",
   "dependencies": {
     "dedent": "^0.7.0",
-    "is-valid-path": "^0.1.1"
+    "is-valid-path": "^0.1.1",
+    "remove": "^0.1.5"
   },
   "devDependencies": {
     "@types/dedent": "^0.7.0",
@@ -44,6 +45,8 @@
     "rollup": "2.58.0",
     "rollup-plugin-atomic": "^3.0.1",
     "shx": "0.3.3",
+    "sort-any": "^4.0.4",
+    "sort-es": "^1.6.4",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.4.3"
