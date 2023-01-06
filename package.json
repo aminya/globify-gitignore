@@ -7,16 +7,16 @@
   "license": "MIT",
   "author": "Amin Yahyaabadi",
   "type": "module",
-  "main": "dist/cjs/main.js",
-  "module": "dist/esm/main.js",
+  "main": "dist/cjs/main.cjs",
+  "module": "dist/esm/main.mjs",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
     "build": "run-s clean && run-p build.*",
-    "build.cjs": "tsc -p tsconfig.cjs.json",
-    "build.esm": "tsc -p tsconfig.esm.json",
+    "build.cjs": "tsc -p tsconfig.cjs.json && mjscjs -p tsconfig.cjs.json",
+    "build.esm": "tsc -p tsconfig.esm.json && mjscjs -p tsconfig.esm.json",
     "clean": "shx rm -rf dist",
     "docs": "shx rm -rf ./README.md && pnpm exec readme --path ./dev/docs/readme.md -y && pnpm exec ts-readme --header-depth 3 && pnpm run format",
     "format": "prettier --write .",
@@ -42,6 +42,7 @@
     "eslint": "7.32.0",
     "eslint-config-atomic": "^1.16.3",
     "jest": "^29.3.1",
+    "mjscjs": "^1.0.9",
     "npm-check-updates": "11.8.5",
     "npm-run-all2": "^6.0.4",
     "prettier-config-atomic": "^3.0.1",
