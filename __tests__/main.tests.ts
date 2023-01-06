@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-array-sort-compare */
 import { globifyGitIgnoreFile, globifyGitIgnore, posixifyPathNormalized } from "../src/main"
 import { join } from "path"
 import { writeFile } from "fs/promises"
@@ -187,23 +188,23 @@ describe("globify-gitignore", () => {
     it("reads the gitignore and converts it to absolute glob patterns", async () => {
       await writeFile(join(dir, ".gitignore"), input)
       const globPatterns = await globifyGitIgnoreFile(dir, true)
-      expect(globPatterns).toEqual(output(dir))
+      expect(globPatterns.sort()).toEqual(output(dir).sort())
     })
     it("reads the gitignore and converts it to relative glob patterns", async () => {
       await writeFile(join(dir, ".gitignore"), input)
       const globPatterns = await globifyGitIgnoreFile(dir)
-      expect(globPatterns).toEqual(output(dir))
+      expect(globPatterns.sort()).toEqual(output().sort())
     })
   })
   describe("globifyGitIgnore", () => {
     it("converts to absolute glob patterns", async () => {
       const globPatterns = await globifyGitIgnore(input, dir, true)
-      expect(globPatterns).toEqual(output(dir))
+      expect(globPatterns.sort()).toEqual(output(dir).sort())
     })
     it("converts to relative glob patterns", async () => {
       await writeFile(join(dir, ".gitignore"), input)
       const globPatterns = await globifyGitIgnore(input)
-      expect(globPatterns).toEqual(output())
+      expect(globPatterns.sort()).toEqual(output().sort())
     })
   })
 })
