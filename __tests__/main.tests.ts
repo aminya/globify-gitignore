@@ -1,7 +1,6 @@
-import { globifyGitIgnoreFile, globifyGitIgnore, posixifyPathNormalized } from "../dist/main"
+import { globifyGitIgnoreFile, globifyGitIgnore, posixifyPathNormalized } from "../src/main"
 import { join } from "path"
-import { promises } from "fs"
-const { writeFile } = promises
+import { writeFile } from "fs/promises"
 
 // current directory has a .gitignore file
 const dir = posixifyPathNormalized(join(__dirname, "fixtures"))

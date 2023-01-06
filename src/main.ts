@@ -101,7 +101,13 @@ export async function globifyGitIgnore(
 
   for (let iEntry = 0; iEntry < gitIgnoreEntriesNum; iEntry++) {
     const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory, absolute)
-    globEntries.push(...globifyOutput)
+
+    globEntries[iEntry] = globifyOutput[0]
+
+    // push extra entry dynamically to the end
+    if (globifyOutput.length === 2) {
+      globEntries.push(globifyOutput[1])
+    }
   }
 
   // unique in the end
