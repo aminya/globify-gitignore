@@ -27,5 +27,5 @@
     "outDir": "./dist"
   },
   "compileOnSave": false,
-  "include": ["src/**/*", "__tests__/**/*"]
+  "include": ["src/**/*", "tests/**/*"]
 }

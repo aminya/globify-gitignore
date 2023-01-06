@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/require-array-sort-compare */
-import { globifyGitIgnoreFile, globifyGitIgnore, posixifyPathNormalized } from "../src/main"
-import { join } from "path"
-import { writeFile } from "fs/promises"
-import { globSorter, uniqueSortGlobs } from "../src/utils"
+import { posixifyPathNormalized } from "../../src/main"
+import { globSorter } from "../../src/utils"
 
 // current directory has a .gitignore file
-const dir = posixifyPathNormalized(join(__dirname, "fixtures"))
+export const directory = posixifyPathNormalized(__dirname)
 
-const input = `# OS metadata
+export const input = `# OS metadata
 .DS_Store
 Thumbs.db
 
@@ -85,7 +83,7 @@ pnpm-debug.log
 *.tgz
 `
 
-function output(dirPrefixGiven: string = "") {
+export function expected(dirPrefixGiven: string = "") {
   let dirPrefix = dirPrefixGiven
   if (dirPrefix !== "") {
     dirPrefix = `${dirPrefix}/`
@@ -184,28 +182,5 @@ function output(dirPrefixGiven: string = "") {
   ]
 }
 
-describe("globify-gitignore", () => {
-  describe("globifyGitIgnoreFile", () => {
-    it("reads the gitignore and converts it to absolute glob patterns", async () => {
-      await writeFile(join(dir, ".gitignore"), input)
-      const globPatterns = await globifyGitIgnoreFile(dir, true)
-      expect(uniqueSortGlobs(globPatterns)).toEqual(output(dir).sort(globSorter))
-    })
-    it("reads the gitignore and converts it to relative glob patterns", async () => {
-      await writeFile(join(dir, ".gitignore"), input)
-      const globPatterns = await globifyGitIgnoreFile(dir)
-      expect(uniqueSortGlobs(globPatterns)).toEqual(output().sort(globSorter))
-    })
-  })
-  describe("globifyGitIgnore", () => {
-    it("converts to absolute glob patterns", async () => {
-      const globPatterns = await globifyGitIgnore(input, dir, true)
-      expect(uniqueSortGlobs(globPatterns)).toEqual(output(dir).sort(globSorter))
-    })
-    it("converts to relative glob patterns", async () => {
-      await writeFile(join(dir, ".gitignore"), input)
-      const globPatterns = await globifyGitIgnore(input)
-      expect(uniqueSortGlobs(globPatterns)).toEqual(output().sort(globSorter))
-    })
-  })
-})
+export const expectedAbsolute = expected(directory).sort(globSorter)
+export const expectedRelative = expected().sort(globSorter)
