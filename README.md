@@ -50,20 +50,26 @@ main()
  * Parse and globy the `.gitingore` file that exists in a directory
  *
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
+ * @param {boolean} absolute [false] If true, the glob will be absolute
  * @returns {Promise<string[]>} An array of glob patterns
  */
-export declare function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<Array<string>>
+export async function globifyGitIgnoreFile(
+  gitIgnoreDirectory: string,
+  absolute: boolean = false
+): Promise<Array<string>>
 
 /**
  * Globify the content of a gitignore string
  *
  * @param {string} gitIgnoreContent The content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
+ * @param {boolean} absolute [false] If true, the glob will be absolute
  * @returns {Promise<string[]>} An array of glob patterns
  */
 export async function globifyGitIgnore(
   gitIgnoreContent: string,
-  gitIgnoreDirectory?: string | undefined
+  gitIgnoreDirectory: string | undefined = undefined,
+  absolute: boolean = false
 ): Promise<Array<string>>
 
 /**
@@ -84,10 +90,15 @@ export declare function posixifyPathNormalized(givenPath: string): string
 
 /**
  * @param {string} givenPath The given path to be globified
- * @param {string} givenDirectory [process.cwd()] The cwd to use to resolve relative pathnames
+ * @param {string} givenDirectory [process.cwd()] The cwd to use to resolve relative path names
+ * @param {boolean} absolute [false] If true, the glob will be absolute
  * @returns {Promise<string | [string, string]>} The glob path or the file path itself
  */
-export declare function globifyPath(givenPath: string, givenDirectory?: string): Promise<string | [string, string]>
+export function globifyPath(
+  givenPath: string,
+  givenDirectory: string = process.cwd(),
+  absolute: boolean = false
+): Promise<string | [string, string]>
 
 /**
  * Globifies a directory

@@ -28,13 +28,15 @@ export function posixifyPathNormalized(givenPath: string): string {
 /**
  * @param {string} givenPath The given path to be globified
  * @param {string} givenDirectory [process.cwd()] The cwd to use to resolve relative path names
+ * @param {boolean} absolute [false] If true, the glob will be absolute
  * @returns {Promise<string | [string, string]>} The glob path or the file path itself
  */
 export function globifyPath(
   givenPath: string,
-  givenDirectory: string = process.cwd()
+  givenDirectory: string = process.cwd(),
+  absolute: boolean = false
 ): Promise<string | [string, string]> {
-  return globifyGitIgnoreEntry(posixifyPath(givenPath), givenDirectory)
+  return globifyGitIgnoreEntry(posixifyPath(givenPath), givenDirectory, absolute)
 }
 
 /**
@@ -50,10 +52,15 @@ export function globifyDirectory(givenDirectory: string) {
  * Parse and globy the `.gitingore` file that exists in a directory
  *
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
+ * @param {boolean} absolute [false] If true, the glob will be absolute
  * @returns {Promise<string[]>} An array of glob patterns
  */
-export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<Array<string>> {
-  return globifyGitIgnore(await readFile(join(gitIgnoreDirectory, ".gitignore"), "utf-8"), gitIgnoreDirectory)
+export async function globifyGitIgnoreFile(
+  gitIgnoreDirectory: string,
+  absolute: boolean = false
+): Promise<Array<string>> {
+  const gitIgnoreContent = await readFile(join(gitIgnoreDirectory, ".gitignore"), "utf-8")
+  return globifyGitIgnore(gitIgnoreContent, gitIgnoreDirectory, absolute)
 }
 
 /**
@@ -61,11 +68,13 @@ export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<
  *
  * @param {string} gitIgnoreContent The content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
+ * @param {boolean} absolute [false] If true, the glob will be absolute
  * @returns {Promise<string[]>} An array of glob patterns
  */
 export async function globifyGitIgnore(
   gitIgnoreContent: string,
-  gitIgnoreDirectory: string | undefined = undefined
+  gitIgnoreDirectory: string | undefined = undefined,
+  absolute: boolean = false
 ): Promise<Array<string>> {
   const gitIgnoreEntries = dedent(gitIgnoreContent)
     .split("\n") // Remove empty lines and comments.
@@ -75,7 +84,7 @@ export async function globifyGitIgnore(
   const globEntries = new Array(gitIgnoreEntriesNum)
 
   for (let iEntry = 0; iEntry < gitIgnoreEntriesNum; iEntry++) {
-    const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory)
+    const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory, absolute)
 
     // Check if `globifyGitIgnoreEntry` returns a pair or a string
     if (typeof globifyOutput === "string") {
@@ -97,11 +106,13 @@ export async function globifyGitIgnore(
  * @param {string} gitIgnoreEntry One git ignore entry (it expects a valid non-comment gitignore entry with no
  *   surrounding whitespace)
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
+ * @param {boolean} absolute [false] If true, the glob will be absolute
  * @returns {Promise<string | [string, string]>} The equivalent glob
  */
 async function globifyGitIgnoreEntry(
   gitIgnoreEntry: string,
-  gitIgnoreDirectory: string | undefined
+  gitIgnoreDirectory: string | undefined,
+  absolute: boolean
 ): Promise<string | [string, string]> {
   // output glob entry
   let entry = gitIgnoreEntry
@@ -130,7 +141,7 @@ async function globifyGitIgnoreEntry(
 
     // Check if it is a directory or file
     if (isPath(entry)) {
-      pathType = await getPathType(gitIgnoreDirectory ? join(gitIgnoreDirectory, entry) : entry)
+      pathType = await getPathType(gitIgnoreDirectory !== undefined ? join(gitIgnoreDirectory, entry) : entry)
     }
   } else {
     const slashPlacement = entry.indexOf("/")
@@ -148,13 +159,13 @@ async function globifyGitIgnoreEntry(
       // has `/` in the middle so it is a relative path
       // Check if it is a directory or file
       if (isPath(entry)) {
-        pathType = await getPathType(gitIgnoreDirectory ? join(gitIgnoreDirectory, entry) : entry)
+        pathType = await getPathType(gitIgnoreDirectory !== undefined ? join(gitIgnoreDirectory, entry) : entry)
       }
     }
   }
 
   // prepend the absolute root directory
-  if (gitIgnoreDirectory) {
+  if (absolute && gitIgnoreDirectory !== undefined) {
     entry = `${posixifyPath(gitIgnoreDirectory)}/${entry}`
   }
 
