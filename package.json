@@ -5,24 +5,24 @@
   "repository": "https://github.com/aminya/globify-gitignore",
   "license": "MIT",
   "author": "Amin Yahyaabadi",
-  "main": "dist/main.js",
+  "type": "module",
+  "main": "dist/cjs/main.js",
+  "module": "dist/esm/main.mjs",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
-    "build": "npm run clean && cross-env NODE_ENV=production cross-env BABEL_KEEP_MODULES=true rollup -c ",
-    "build-commit": "build-commit -o dist",
-    "bump": "ncu -u -x coffeescript",
+    "build": "run-s clean && run-p build.*",
+    "build.cjs": "tsc -p tsconfig.cjs.json",
+    "build.esm": "tsc -p tsconfig.esm.json",
     "clean": "shx rm -rf dist",
-    "dev": "npm run clean && cross-env NODE_ENV=development cross-env BABEL_KEEP_MODULES=true rollup -c -w",
     "format": "prettier --write .",
     "lint": "eslint . --fix",
     "prepare": "npm run build",
     "test": "jest",
     "test.format": "prettier . --check",
-    "test.lint": "eslint .",
-    "tsc": "tsc -p src/tsconfig.json || echo done"
+    "test.lint": "eslint ."
   },
   "prettier": "prettier-config-atomic",
   "dependencies": {
@@ -41,9 +41,8 @@
     "eslint-config-atomic": "^1.16.3",
     "jest": "^29.3.1",
     "npm-check-updates": "11.8.5",
+    "npm-run-all2": "^6.0.4",
     "prettier-config-atomic": "^3.0.1",
-    "rollup": "2.58.0",
-    "rollup-plugin-atomic": "^3.0.1",
     "shx": "0.3.3",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",

@@ -16,15 +16,15 @@
     "inlineSources": true,
     "preserveSymlinks": true,
     "removeComments": false,
-    "lib": ["ES2020", "dom"],
+    "lib": ["ES2020"],
     "target": "ES2020",
     "allowJs": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "module": "commonjs",
+    "module": "ES2020",
     "moduleResolution": "node",
     "importHelpers": false,
-    "outDir": "./dist"
+    "outDir": "./dist/"
   },
   "compileOnSave": false,
   "include": ["src/**/*", "tests/**/*"]

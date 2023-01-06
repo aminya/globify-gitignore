@@ -1,5 +1,6 @@
 /** @type {import("ts-jest").JestConfigWithTsJest} */
-module.exports = {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default {
   preset: "ts-jest",
   testEnvironment: "node",
   testMatch: ["**/tests/**/*.test.ts"],
