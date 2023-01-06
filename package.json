@@ -1,6 +1,6 @@
 {
   "name": "globify-gitignore",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert Gitignore to Glob patterns",
   "homepage": "https://github.com/aminya/globify-gitignore",
   "repository": "https://github.com/aminya/globify-gitignore",
