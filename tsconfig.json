@@ -32,6 +32,6 @@
   "compileOnSave": false,
   "include": [
     "src/**/*",
-    "__tests__/**/*"
+    "__tests__/**/*",
   ],
 }

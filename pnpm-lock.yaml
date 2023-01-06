@@ -12,13 +12,13 @@ specifiers:
   eslint-config-atomic: ^1.16.3
   is-valid-path: ^0.1.1
   jest: ^29.3.1
+  make-unique: ^1.0.4
   npm-check-updates: 11.8.5
   prettier-config-atomic: ^3.0.1
   remove: ^0.1.5
   rollup: 2.58.0
   rollup-plugin-atomic: ^3.0.1
   shx: 0.3.3
-  sort-any: ^4.0.4
   sort-es: ^1.6.4
   ts-jest: ^29.0.3
   ts-node: ^10.9.1
@@ -28,6 +28,10 @@ dependencies:
   dedent: 0.7.0
   is-valid-path: 0.1.1
   remove: 0.1.5
+
+optionalDependencies:
+  make-unique: 1.0.4
+  sort-es: 1.6.4
 
 devDependencies:
   '@types/dedent': 0.7.0
@@ -44,8 +48,6 @@ devDependencies:
   rollup: 2.58.0
   rollup-plugin-atomic: 3.0.1_csv6npyqd4qigdj7kwbr3pkgwy
   shx: 0.3.3
-  sort-any: 4.0.4
-  sort-es: 1.6.4
   ts-jest: 29.0.3_34raqbajscp3ft3kx5hfywu75m
   ts-node: 10.9.1_acediw7w5whfkzxu6suyjouply
   typescript: 4.4.3
@@ -1422,6 +1424,11 @@ packages:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
     engines: {node: '>=8'}
     dev: true
+
+  /array-uniq/1.0.3:
+    resolution: {integrity: sha512-MNha4BWQ6JbwhFhj03YK552f7cb3AzoE8SzeljgChvL1dl3IcvggXVz1DilzySZkCja+CXuZbdW7yATchWn8/Q==}
+    engines: {node: '>=0.10.0'}
+    optional: true
 
   /array.prototype.flat/1.2.4:
     resolution: {integrity: sha512-4470Xi3GAPAjZqFcljX2xzckv1qeKPizoNkiS0+O4IoPR2ZNpcjE0pkhdihlDouK+x6QOast26B4Q/O9DJnwSg==}
@@ -4730,6 +4737,14 @@ packages:
       - supports-color
     dev: true
 
+  /make-unique/1.0.4:
+    resolution: {integrity: sha512-fhy5iusM7DNzilx1gW1YvAm1d6VjZ1TRoD52+U4ZrfMwIMzHObPGEcvssZwvUgO9R2ef8XOakx6lGMVgS68QcQ==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      array-uniq: 1.0.3
+    dev: false
+    optional: true
+
   /makeerror/1.0.12:
     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
     dependencies:
@@ -6096,16 +6111,10 @@ packages:
       smart-buffer: 4.1.0
     dev: true
 
-  /sort-any/4.0.4:
-    resolution: {integrity: sha512-ceGcn2LfsvjeP4aKZMA1DC2/T5YfeQmZW61OdD7y2uM5oUFvvDndLozASDrbq7712maWlz0vwlacUeCzYQBHaw==}
-    engines: {node: '>=12'}
-    dependencies:
-      lodash: 4.17.21
-    dev: true
-
   /sort-es/1.6.4:
     resolution: {integrity: sha512-/aujEfKqeR9ghQScotgmE+/54becfWtez5HdZnENAtR/oWQpFD6+HXv1jo/rO97UVuSb/GgOLEW9x0uGUm6mpQ==}
-    dev: true
+    dev: false
+    optional: true
 
   /sort-object-keys/1.1.3:
     resolution: {integrity: sha512-855pvK+VkU7PaKYPc+Jjnmt4EzejQHyhhF33q31qG8x7maDzkeFhAAThdCYay11CISO+qAMwjOBP+fPZe0IPyg==}
