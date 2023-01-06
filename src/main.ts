@@ -2,7 +2,6 @@ import { join, normalize } from "path"
 import { promises } from "fs"
 const { readFile, stat } = promises
 import isPath from "is-valid-path"
-import { unique } from "./utils"
 import dedent from "dedent"
 
 /**
@@ -105,8 +104,7 @@ export async function globifyGitIgnore(
     globEntries.push(...globifyOutput)
   }
 
-  // unique in the end
-  return unique(globEntries)
+  return globEntries
 }
 
 /**
