@@ -81,7 +81,8 @@ dist
 `
 const gitignoreDirectory = __dirname
 
-const globPatterns = await globifyGitIgnore(gitignoreContent, gitignoreDirectory)
+// An array of `GlobifiedEntry` objects. Each object has a `glob` property and an `included` property
+const globifiedEntries = await globifyGitIgnore(gitignoreContent, gitignoreDirectory)
 ```
 
 ## Main API
@@ -90,10 +91,19 @@ const globPatterns = await globifyGitIgnore(gitignoreContent, gitignoreDirectory
 
 ### `GlobifiedEntry` (type)
 
-The result of a globified gitignore entry
+The result of a globified gitignore entry. The glob pattern is in the `glob` property, and the `included` property tells if the pattern is an included file or an excluded file
 
-The glob pattern is in the `@property glob` property, and the `@property included` property tells if the pattern is
-an included file or an excluded file
+```ts
+export type GlobifiedEntry = {
+  /** The glob pattern calculated from the gitignore pattern */
+  glob: string
+  /**
+   * If `true`, this means that the pattern was prepended by `!` in the gitignore file, and so it is an included file
+   * Otherwise, it is an excluded file
+   */
+  included: boolean
+}
+```
 
 ### `globifyGitIgnoreFile` (function)
 
