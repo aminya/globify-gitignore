@@ -16,10 +16,7 @@
     "inlineSources": true,
     "preserveSymlinks": true,
     "removeComments": false,
-    "lib": [
-      "ES2020",
-      "dom"
-    ],
+    "lib": ["ES2020", "dom"],
     "target": "ES2020",
     "allowJs": true,
     "esModuleInterop": true,
@@ -30,8 +27,5 @@
     "outDir": "./dist"
   },
   "compileOnSave": false,
-  "include": [
-    "src/**/*",
-    "__tests__/**/*",
-  ],
+  "include": ["src/**/*", "__tests__/**/*"]
 }

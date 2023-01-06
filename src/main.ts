@@ -1,44 +1,13 @@
-import { join, normalize } from "path"
+import { join } from "path"
 import { promises } from "fs"
-const { readFile, stat } = promises
+const { readFile } = promises
 import isPath from "is-valid-path"
 import dedent from "dedent"
+import { GlobifiedEntry } from "./globified-entry"
+import { getPathType, PATH_TYPE, posixifyPath, posixifyPathNormalized } from "./path-utils"
 
-/**
- * The result of a globified gitignore entry
- *
- * The glob pattern is in the `@property glob` property, and the `@property included` property tells if the pattern is
- * an included file or an excluded file
- */
-export type GlobifiedEntry = {
-  /** The glob pattern calculated from the gitignore pattern */
-  glob: string
-  /**
-   * If `true`, this means that the pattern was prepended by `!` in the gitignore file, and so it is an included file
-   * Otherwise, it is an excluded file
-   */
-  included: boolean
-}
-
-/**
- * Converts given path to Posix (replacing \ with /)
- *
- * @param {string} givenPath Path to convert
- * @returns {string} Converted filepath
- */
-export function posixifyPath(givenPath: string): string {
-  return normalize(givenPath).replace(/\\/g, "/")
-}
-
-/**
- * Converts given path to Posix (replacing \ with /) and removing ending slashes
- *
- * @param {string} givenPath Path to convert
- * @returns {string} Converted filepath
- */
-export function posixifyPathNormalized(givenPath: string): string {
-  return posixifyPath(givenPath).replace(/\/$/, "")
-}
+export { GlobifiedEntry } from "./globified-entry"
+export { posixifyPath, posixifyPathNormalized } from "./path-utils"
 
 /**
  * @param {string} givenPath The given path to be globified
@@ -228,32 +197,4 @@ function trimLeadingWhiteSpace(str: string) {
 /** Remove whitespace from a gitignore entry */
 function trimWhiteSpace(str: string) {
   return trimLeadingWhiteSpace(trimTrailingWhitespace(str))
-}
-
-/** Enum that specifies the path type. 1 for directory, 2 for file, 0 for others */
-enum PATH_TYPE {
-  OTHER,
-  DIRECTORY,
-  FILE,
-}
-
-/**
- * Get the type of the given path
- *
- * @param {string} givenPath Absolute path
- * @returns {Promise<PATH_TYPE>}
- */
-async function getPathType(filepath: string): Promise<PATH_TYPE> {
-  let pathStat
-  try {
-    pathStat = await stat(filepath)
-  } catch (error) {
-    return PATH_TYPE.OTHER
-  }
-  if (pathStat.isDirectory()) {
-    return PATH_TYPE.DIRECTORY
-  } else if (pathStat.isFile()) {
-    return PATH_TYPE.FILE
-  }
-  return PATH_TYPE.OTHER
 }
