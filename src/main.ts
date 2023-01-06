@@ -6,6 +6,22 @@ import { unique } from "./utils"
 import dedent from "dedent"
 
 /**
+ * The result of a globified gitignore entry
+ *
+ * The glob pattern is in the `@property glob` property, and the `@property included` property tells if the pattern is
+ * an included file or an excluded file
+ */
+export type GlobifiedEntry = {
+  /** The glob pattern calculated from the gitignore pattern */
+  glob: string
+  /**
+   * If `true`, this means that the pattern was prepended by `!` in the gitignore file, and so it is an included file
+   * Otherwise, it is an excluded file
+   */
+  included: boolean
+}
+
+/**
  * Converts given path to Posix (replacing \ with /)
  *
  * @param {string} givenPath Path to convert
@@ -29,13 +45,13 @@ export function posixifyPathNormalized(givenPath: string): string {
  * @param {string} givenPath The given path to be globified
  * @param {string} givenDirectory [process.cwd()] The cwd to use to resolve relative path names
  * @param {boolean} absolute [false] If true, the glob will be absolute
- * @returns {Promise<string | [string, string]>} The glob path or the file path itself
+ * @returns {Promise<GlobifiedEntry | [GlobifiedEntry, GlobifiedEntry]>} The glob path or the file path itself
  */
 export function globifyPath(
   givenPath: string,
   givenDirectory: string = process.cwd(),
   absolute: boolean = false
-): Promise<string | [string, string]> {
+): Promise<[GlobifiedEntry] | [GlobifiedEntry, GlobifiedEntry]> {
   return globifyGitIgnoreEntry(posixifyPath(givenPath), givenDirectory, absolute)
 }
 
@@ -53,12 +69,12 @@ export function globifyDirectory(givenDirectory: string) {
  *
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
  * @param {boolean} absolute [false] If true, the glob will be absolute
- * @returns {Promise<string[]>} An array of glob patterns
+ * @returns {Promise<GlobifiedEntry[]>} An array of glob patterns
  */
 export async function globifyGitIgnoreFile(
   gitIgnoreDirectory: string,
   absolute: boolean = false
-): Promise<Array<string>> {
+): Promise<Array<GlobifiedEntry>> {
   const gitIgnoreContent = await readFile(join(gitIgnoreDirectory, ".gitignore"), "utf-8")
   return globifyGitIgnore(gitIgnoreContent, gitIgnoreDirectory, absolute)
 }
@@ -69,33 +85,23 @@ export async function globifyGitIgnoreFile(
  * @param {string} gitIgnoreContent The content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
  * @param {boolean} absolute [false] If true, the glob will be absolute
- * @returns {Promise<string[]>} An array of glob patterns
+ * @returns {Promise<GlobifiedEntry[]>} An array of glob patterns
  */
 export async function globifyGitIgnore(
   gitIgnoreContent: string,
   gitIgnoreDirectory: string | undefined = undefined,
   absolute: boolean = false
-): Promise<Array<string>> {
+): Promise<Array<GlobifiedEntry>> {
   const gitIgnoreEntries = dedent(gitIgnoreContent)
     .split("\n") // Remove empty lines and comments.
     .filter((entry) => !(isWhitespace(entry) || isGitIgnoreComment(entry))) // Remove surrounding whitespace
     .map((entry) => trimWhiteSpace(entry))
   const gitIgnoreEntriesNum = gitIgnoreEntries.length
-  const globEntries = new Array(gitIgnoreEntriesNum)
+  const globEntries: Array<GlobifiedEntry> = new Array(gitIgnoreEntriesNum)
 
   for (let iEntry = 0; iEntry < gitIgnoreEntriesNum; iEntry++) {
     const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory, absolute)
-
-    // Check if `globifyGitIgnoreEntry` returns a pair or a string
-    if (typeof globifyOutput === "string") {
-      // string
-      globEntries[iEntry] = globifyOutput // Place the entry in the output array
-    } else {
-      // pair
-      globEntries[iEntry] = globifyOutput[0] // Place the entry in the output array
-
-      globEntries.push(globifyOutput[1]) // Push the additional entry
-    }
+    globEntries.push(...globifyOutput)
   }
 
   // unique in the end
@@ -107,23 +113,23 @@ export async function globifyGitIgnore(
  *   surrounding whitespace)
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
  * @param {boolean} absolute [false] If true, the glob will be absolute
- * @returns {Promise<string | [string, string]>} The equivalent glob
+ * @returns {Promise<[GlobifiedEntry] | [GlobifiedEntry, GlobifiedEntry]>} The equivalent glob
  */
-async function globifyGitIgnoreEntry(
+export async function globifyGitIgnoreEntry(
   gitIgnoreEntry: string,
   gitIgnoreDirectory: string | undefined,
   absolute: boolean
-): Promise<string | [string, string]> {
+): Promise<[GlobifiedEntry] | [GlobifiedEntry, GlobifiedEntry]> {
   // output glob entry
   let entry = gitIgnoreEntry
   // Process the entry beginning
   // '!' in .gitignore means to force include the pattern
   // remove "!" to allow the processing of the pattern and swap ! in the end of the loop
-  let forceInclude = false
+  let included = false
 
   if (entry[0] === "!") {
     entry = entry.substring(1)
-    forceInclude = true
+    included = true
   }
 
   // If there is a separator at the beginning or middle (or both) of the pattern,
@@ -169,26 +175,26 @@ async function globifyGitIgnoreEntry(
     entry = `${posixifyPath(gitIgnoreDirectory)}/${entry}`
   }
 
-  // swap !
-  entry = forceInclude ? entry : `!${entry}`
-
   // Process the entry ending
   if (pathType === PATH_TYPE.DIRECTORY) {
     // in glob this is equal to `directory/**`
     if (entry.endsWith("/")) {
-      return `${entry}**`
+      return [{ glob: `${entry}**`, included }]
     } else {
-      return `${entry}/**`
+      return [{ glob: `${entry}/**`, included }]
     }
   } else if (pathType === PATH_TYPE.FILE) {
     // return as is for file
-    return entry
+    return [{ glob: entry, included }]
   } else if (!entry.endsWith("/**")) {
     // the pattern can match both files and directories
     // so we should include both `entry` and `entry/**`
-    return [entry, `${entry}/**`]
+    return [
+      { glob: entry, included },
+      { glob: `${entry}/**`, included },
+    ]
   } else {
-    return entry
+    return [{ glob: entry, included }]
   }
 }
 
