@@ -148,11 +148,7 @@ export async function globifyGitIgnoreEntry(
   // Process the entry ending
   if (pathType === PATH_TYPE.DIRECTORY) {
     // in glob this is equal to `directory/**`
-    if (entry.endsWith("/")) {
-      return [{ glob: `${entry}**`, included }]
-    } else {
-      return [{ glob: `${entry}/**`, included }]
-    }
+    return [{ glob: entry.endsWith("/") ? `${entry}**` : `${entry}/**`, included }]
   } else if (pathType === PATH_TYPE.FILE) {
     // return as is for file
     return [{ glob: entry, included }]
@@ -161,7 +157,7 @@ export async function globifyGitIgnoreEntry(
     // so we should include both `entry` and `entry/**`
     return [
       { glob: entry, included },
-      { glob: `${entry}/**`, included },
+      { glob: entry.endsWith("/") ? `${entry}**` : `${entry}/**`, included },
     ]
   } else {
     return [{ glob: entry, included }]
