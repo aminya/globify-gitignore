@@ -97,17 +97,12 @@ export async function globifyGitIgnore(
     .filter((entry) => !(isWhitespace(entry) || isGitIgnoreComment(entry))) // Remove surrounding whitespace
     .map((entry) => trimWhiteSpace(entry))
   const gitIgnoreEntriesNum = gitIgnoreEntries.length
-  const globEntries: Array<GlobifiedEntry> = new Array(gitIgnoreEntriesNum)
+  const globEntries: Array<GlobifiedEntry> = []
 
   for (let iEntry = 0; iEntry < gitIgnoreEntriesNum; iEntry++) {
     const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory, absolute)
 
-    globEntries[iEntry] = globifyOutput[0]
-
-    // push extra entry dynamically to the end
-    if (globifyOutput.length === 2) {
-      globEntries.push(globifyOutput[1])
-    }
+    globEntries.push(...globifyOutput)
   }
 
   // unique in the end
