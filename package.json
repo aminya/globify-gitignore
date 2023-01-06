@@ -2,6 +2,7 @@
   "name": "globify-gitignore",
   "version": "0.2.1",
   "description": "Convert Gitignore to Glob patterns",
+  "homepage": "https://github.com/aminya/globify-gitignore",
   "repository": "https://github.com/aminya/globify-gitignore",
   "license": "MIT",
   "author": "Amin Yahyaabadi",
