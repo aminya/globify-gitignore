@@ -64,14 +64,16 @@ export async function globifyGitIgnore(
     .split("\n") // Remove empty lines and comments.
     .filter((entry) => !(isWhitespace(entry) || isGitIgnoreComment(entry))) // Remove surrounding whitespace
     .map((entry) => trimWhiteSpace(entry))
-  const gitIgnoreEntriesNum = gitIgnoreEntries.length
+
   const globEntries: Array<GlobifiedEntry> = []
 
-  for (let iEntry = 0; iEntry < gitIgnoreEntriesNum; iEntry++) {
-    const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory, absolute)
-
-    globEntries.push(...globifyOutput)
-  }
+  await Promise.all(
+    gitIgnoreEntries.map(async (entry) => {
+      const globifyOutput = await globifyGitIgnoreEntry(entry, gitIgnoreDirectory, absolute)
+      // synchronus push
+      globEntries.push(...globifyOutput)
+    })
+  )
 
   return globEntries
 }
