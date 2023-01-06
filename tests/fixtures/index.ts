@@ -5,7 +5,15 @@ import { globSorter } from "../../src/utils"
 // current directory has a .gitignore file
 export const directory = posixifyPathNormalized(__dirname)
 
-export const input = `# OS metadata
+// change the current working directory to directory
+// so that the relative directories are resolved correctly
+process.chdir(directory)
+
+export const input = `
+/relative
+/relative_directory/
+
+# OS metadata
 .DS_Store
 Thumbs.db
 
@@ -90,6 +98,9 @@ export function expected(dirPrefixGiven: string = "") {
   }
 
   return [
+    { included: false, glob: `${dirPrefix}relative` },
+    { included: false, glob: `${dirPrefix}relative/**` },
+    { included: false, glob: `${dirPrefix}relative_directory/**` },
     { included: false, glob: `${dirPrefix}_infrastructure/tests/build/**` },
     { included: false, glob: `${dirPrefix}_infrastructure/tests/build` },
     { included: false, glob: `${dirPrefix}.settings/launch.json/**` },

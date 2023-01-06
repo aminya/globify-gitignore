@@ -1,3 +1,7 @@
+
+/relative
+/relative_directory/
+
 # OS metadata
 .DS_Store
 Thumbs.db
