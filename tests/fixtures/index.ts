@@ -12,6 +12,9 @@ process.chdir(directory)
 export const input = `
 /relative
 /relative_directory/
+/relative_directory_2
+/relative_file
+/relative_file_2
 
 # OS metadata
 .DS_Store
@@ -101,6 +104,10 @@ export function expected(dirPrefixGiven: string = "") {
     { included: false, glob: `${dirPrefix}relative` },
     { included: false, glob: `${dirPrefix}relative/**` },
     { included: false, glob: `${dirPrefix}relative_directory/**` },
+    { included: false, glob: `${dirPrefix}relative_directory_2/**` },
+    { included: false, glob: `${dirPrefix}relative_file` },
+    { included: false, glob: `${dirPrefix}relative_file_2` },
+    { included: false, glob: `${dirPrefix}relative_file_2/**` },
     { included: false, glob: `${dirPrefix}_infrastructure/tests/build/**` },
     { included: false, glob: `${dirPrefix}_infrastructure/tests/build` },
     { included: false, glob: `${dirPrefix}.settings/launch.json/**` },
