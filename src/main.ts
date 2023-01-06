@@ -1,40 +1,26 @@
-import { join, normalize } from "path"
+import { join } from "path"
 import { promises } from "fs"
-const { readFile, stat } = promises
+const { readFile } = promises
 import isPath from "is-valid-path"
-import { unique } from "./utils"
 import dedent from "dedent"
+import { GlobifiedEntry } from "./globified-entry"
+import { getPathType, PATH_TYPE, posixifyPath, posixifyPathNormalized } from "./path-utils"
 
-/**
- * Converts given path to Posix (replacing \ with /)
- *
- * @param {string} givenPath Path to convert
- * @returns {string} Converted filepath
- */
-export function posixifyPath(givenPath: string): string {
-  return normalize(givenPath).replace(/\\/g, "/")
-}
-
-/**
- * Converts given path to Posix (replacing \ with /) and removing ending slashes
- *
- * @param {string} givenPath Path to convert
- * @returns {string} Converted filepath
- */
-export function posixifyPathNormalized(givenPath: string): string {
-  return posixifyPath(givenPath).replace(/\/$/, "")
-}
+export { GlobifiedEntry } from "./globified-entry"
+export { posixifyPath, posixifyPathNormalized } from "./path-utils"
 
 /**
  * @param {string} givenPath The given path to be globified
  * @param {string} givenDirectory [process.cwd()] The cwd to use to resolve relative path names
- * @returns {Promise<string | [string, string]>} The glob path or the file path itself
+ * @param {boolean} absolute [false] If true, the glob will be absolute
+ * @returns {Promise<GlobifiedEntry | [GlobifiedEntry, GlobifiedEntry]>} The glob path or the file path itself
  */
 export function globifyPath(
   givenPath: string,
-  givenDirectory: string = process.cwd()
-): Promise<string | [string, string]> {
-  return globifyGitIgnoreEntry(posixifyPath(givenPath), givenDirectory)
+  givenDirectory: string = process.cwd(),
+  absolute: boolean = false
+): Promise<[GlobifiedEntry] | [GlobifiedEntry, GlobifiedEntry]> {
+  return globifyGitIgnoreEntry(posixifyPath(givenPath), givenDirectory, absolute)
 }
 
 /**
@@ -50,10 +36,15 @@ export function globifyDirectory(givenDirectory: string) {
  * Parse and globy the `.gitingore` file that exists in a directory
  *
  * @param {string} gitIgnoreDirectory The given directory that has the `.gitignore` file
- * @returns {Promise<string[]>} An array of glob patterns
+ * @param {boolean} absolute [false] If true, the glob will be absolute
+ * @returns {Promise<GlobifiedEntry[]>} An array of glob patterns
  */
-export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<Array<string>> {
-  return globifyGitIgnore(await readFile(join(gitIgnoreDirectory, ".gitignore"), "utf-8"), gitIgnoreDirectory)
+export async function globifyGitIgnoreFile(
+  gitIgnoreDirectory: string,
+  absolute: boolean = false
+): Promise<Array<GlobifiedEntry>> {
+  const gitIgnoreContent = await readFile(join(gitIgnoreDirectory, ".gitignore"), "utf-8")
+  return globifyGitIgnore(gitIgnoreContent, gitIgnoreDirectory, absolute)
 }
 
 /**
@@ -61,58 +52,54 @@ export async function globifyGitIgnoreFile(gitIgnoreDirectory: string): Promise<
  *
  * @param {string} gitIgnoreContent The content of the gitignore file
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
- * @returns {Promise<string[]>} An array of glob patterns
+ * @param {boolean} absolute [false] If true, the glob will be absolute
+ * @returns {Promise<GlobifiedEntry[]>} An array of glob patterns
  */
 export async function globifyGitIgnore(
   gitIgnoreContent: string,
-  gitIgnoreDirectory: string | undefined = undefined
-): Promise<Array<string>> {
+  gitIgnoreDirectory: string | undefined = undefined,
+  absolute: boolean = false
+): Promise<Array<GlobifiedEntry>> {
   const gitIgnoreEntries = dedent(gitIgnoreContent)
     .split("\n") // Remove empty lines and comments.
     .filter((entry) => !(isWhitespace(entry) || isGitIgnoreComment(entry))) // Remove surrounding whitespace
     .map((entry) => trimWhiteSpace(entry))
-  const gitIgnoreEntriesNum = gitIgnoreEntries.length
-  const globEntries = new Array(gitIgnoreEntriesNum)
 
-  for (let iEntry = 0; iEntry < gitIgnoreEntriesNum; iEntry++) {
-    const globifyOutput = await globifyGitIgnoreEntry(gitIgnoreEntries[iEntry], gitIgnoreDirectory)
+  const globEntries: Array<GlobifiedEntry> = []
 
-    // Check if `globifyGitIgnoreEntry` returns a pair or a string
-    if (typeof globifyOutput === "string") {
-      // string
-      globEntries[iEntry] = globifyOutput // Place the entry in the output array
-    } else {
-      // pair
-      globEntries[iEntry] = globifyOutput[0] // Place the entry in the output array
+  await Promise.all(
+    gitIgnoreEntries.map(async (entry) => {
+      const globifyOutput = await globifyGitIgnoreEntry(entry, gitIgnoreDirectory, absolute)
+      // synchronus push
+      globEntries.push(...globifyOutput)
+    })
+  )
 
-      globEntries.push(globifyOutput[1]) // Push the additional entry
-    }
-  }
-
-  // unique in the end
-  return unique(globEntries)
+  return globEntries
 }
 
 /**
  * @param {string} gitIgnoreEntry One git ignore entry (it expects a valid non-comment gitignore entry with no
  *   surrounding whitespace)
  * @param {string | undefined} gitIgnoreDirectory The directory of gitignore
- * @returns {Promise<string | [string, string]>} The equivalent glob
+ * @param {boolean} absolute [false] If true, the glob will be absolute
+ * @returns {Promise<[GlobifiedEntry] | [GlobifiedEntry, GlobifiedEntry]>} The equivalent glob
  */
-async function globifyGitIgnoreEntry(
+export async function globifyGitIgnoreEntry(
   gitIgnoreEntry: string,
-  gitIgnoreDirectory: string | undefined
-): Promise<string | [string, string]> {
+  gitIgnoreDirectory: string | undefined,
+  absolute: boolean
+): Promise<[GlobifiedEntry] | [GlobifiedEntry, GlobifiedEntry]> {
   // output glob entry
   let entry = gitIgnoreEntry
   // Process the entry beginning
   // '!' in .gitignore means to force include the pattern
   // remove "!" to allow the processing of the pattern and swap ! in the end of the loop
-  let forceInclude = false
+  let included = false
 
   if (entry[0] === "!") {
     entry = entry.substring(1)
-    forceInclude = true
+    included = true
   }
 
   // If there is a separator at the beginning or middle (or both) of the pattern,
@@ -130,7 +117,7 @@ async function globifyGitIgnoreEntry(
 
     // Check if it is a directory or file
     if (isPath(entry)) {
-      pathType = await getPathType(gitIgnoreDirectory ? join(gitIgnoreDirectory, entry) : entry)
+      pathType = await getPathType(gitIgnoreDirectory !== undefined ? join(gitIgnoreDirectory, entry) : entry)
     }
   } else {
     const slashPlacement = entry.indexOf("/")
@@ -148,36 +135,36 @@ async function globifyGitIgnoreEntry(
       // has `/` in the middle so it is a relative path
       // Check if it is a directory or file
       if (isPath(entry)) {
-        pathType = await getPathType(gitIgnoreDirectory ? join(gitIgnoreDirectory, entry) : entry)
+        pathType = await getPathType(gitIgnoreDirectory !== undefined ? join(gitIgnoreDirectory, entry) : entry)
       }
     }
   }
 
   // prepend the absolute root directory
-  if (gitIgnoreDirectory) {
+  if (absolute && gitIgnoreDirectory !== undefined) {
     entry = `${posixifyPath(gitIgnoreDirectory)}/${entry}`
   }
-
-  // swap !
-  entry = forceInclude ? entry : `!${entry}`
 
   // Process the entry ending
   if (pathType === PATH_TYPE.DIRECTORY) {
     // in glob this is equal to `directory/**`
     if (entry.endsWith("/")) {
-      return `${entry}**`
+      return [{ glob: `${entry}**`, included }]
     } else {
-      return `${entry}/**`
+      return [{ glob: `${entry}/**`, included }]
     }
   } else if (pathType === PATH_TYPE.FILE) {
     // return as is for file
-    return entry
+    return [{ glob: entry, included }]
   } else if (!entry.endsWith("/**")) {
     // the pattern can match both files and directories
     // so we should include both `entry` and `entry/**`
-    return [entry, `${entry}/**`]
+    return [
+      { glob: entry, included },
+      { glob: `${entry}/**`, included },
+    ]
   } else {
-    return entry
+    return [{ glob: entry, included }]
   }
 }
 
@@ -212,32 +199,4 @@ function trimLeadingWhiteSpace(str: string) {
 /** Remove whitespace from a gitignore entry */
 function trimWhiteSpace(str: string) {
   return trimLeadingWhiteSpace(trimTrailingWhitespace(str))
-}
-
-/** Enum that specifies the path type. 1 for directory, 2 for file, 0 for others */
-enum PATH_TYPE {
-  OTHER,
-  DIRECTORY,
-  FILE,
-}
-
-/**
- * Get the type of the given path
- *
- * @param {string} givenPath Absolute path
- * @returns {Promise<PATH_TYPE>}
- */
-async function getPathType(filepath: string): Promise<PATH_TYPE> {
-  let pathStat
-  try {
-    pathStat = await stat(filepath)
-  } catch (error) {
-    return PATH_TYPE.OTHER
-  }
-  if (pathStat.isDirectory()) {
-    return PATH_TYPE.DIRECTORY
-  } else if (pathStat.isFile()) {
-    return PATH_TYPE.FILE
-  }
-  return PATH_TYPE.OTHER
 }
