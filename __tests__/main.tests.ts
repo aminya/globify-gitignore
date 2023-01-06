@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/require-array-sort-compare */
-import { globifyGitIgnoreFile, globifyGitIgnore, posixifyPathNormalized, GlobifiedEntry } from "../src/main"
+import { globifyGitIgnoreFile, globifyGitIgnore, posixifyPathNormalized } from "../src/main"
 import { join } from "path"
 import { writeFile } from "fs/promises"
-import { byString, byValue } from "sort-es"
+import { globSorter, uniqueSortGlobs } from "../src/utils"
 
 // current directory has a .gitignore file
 const dir = posixifyPathNormalized(join(__dirname, "fixtures"))
@@ -183,30 +183,29 @@ function output(dirPrefixGiven: string = "") {
     { included: true, glob: `${dirPrefix}scripts/not-needed.js` },
   ]
 }
-const globSorter = byValue((g: GlobifiedEntry) => g.glob, byString())
 
 describe("globify-gitignore", () => {
   describe("globifyGitIgnoreFile", () => {
     it("reads the gitignore and converts it to absolute glob patterns", async () => {
       await writeFile(join(dir, ".gitignore"), input)
       const globPatterns = await globifyGitIgnoreFile(dir, true)
-      expect(globPatterns.sort(globSorter)).toEqual(output(dir).sort(globSorter))
+      expect(uniqueSortGlobs(globPatterns)).toEqual(output(dir).sort(globSorter))
     })
     it("reads the gitignore and converts it to relative glob patterns", async () => {
       await writeFile(join(dir, ".gitignore"), input)
       const globPatterns = await globifyGitIgnoreFile(dir)
-      expect(globPatterns.sort(globSorter)).toEqual(output().sort(globSorter))
+      expect(uniqueSortGlobs(globPatterns)).toEqual(output().sort(globSorter))
     })
   })
   describe("globifyGitIgnore", () => {
     it("converts to absolute glob patterns", async () => {
       const globPatterns = await globifyGitIgnore(input, dir, true)
-      expect(globPatterns.sort(globSorter)).toEqual(output(dir).sort(globSorter))
+      expect(uniqueSortGlobs(globPatterns)).toEqual(output(dir).sort(globSorter))
     })
     it("converts to relative glob patterns", async () => {
       await writeFile(join(dir, ".gitignore"), input)
       const globPatterns = await globifyGitIgnore(input)
-      expect(globPatterns.sort(globSorter)).toEqual(output().sort(globSorter))
+      expect(uniqueSortGlobs(globPatterns)).toEqual(output().sort(globSorter))
     })
   })
 })
