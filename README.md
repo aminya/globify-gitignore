@@ -2,8 +2,8 @@
 
 <h1 align="center">globify-gitignore</h1>
 <p>
-  <a href="https://github.com/aminya/patha/actions/workflows/CI.yml" target="_blank">
-    <img alt="CI" src="https://github.com/aminya/patha/actions/workflows/CI.yml/badge.svg">
+  <a href="https://github.com/aminya/globify-gitignore/actions/workflows/CI.yml" target="_blank">
+    <img alt="CI" src="https://github.com/aminya/globify-gitignore/actions/workflows/CI.yml/badge.svg">
   </a>
   <a href="https://www.npmjs.com/package/globify-gitignore" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/globify-gitignore.svg">
